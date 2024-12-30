@@ -1,32 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/utils/color.dart';
-import 'package:flutter_application_1/features/home/widget/cate_card.dart';
 import 'package:flutter_application_1/features/home/widget/doc_card.dart';
 import 'package:flutter_application_1/features/home/widget/end_drawer.dart';
-import 'package:flutter_application_1/features/home/widget/folder.dart';
-import 'package:flutter_application_1/features/home/widget/headline.dart';
+import 'package:flutter_application_1/features/preview/screen/preview_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  late TabController _tabController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: const EndDrawer(),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.primary,
-        elevation: 0,
-        title: Text(
-          'Doc Scanner',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: AppColors.buttonText,
-              ),
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: AppColors.buttonText),
@@ -35,75 +42,108 @@ class HomeScreen extends StatelessWidget {
             },
           ),
         ],
+        backgroundColor: AppColors.primary,
+        title: Text(
+          'Doc Scanner',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: AppColors.buttonText,
+                fontSize: 24,
+              ),
+        ),
+        elevation: 0,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppColors.buttonText,
+          labelColor: AppColors.buttonText,
+          unselectedLabelColor: AppColors.buttonText.withOpacity(0.4),
+          tabs: const [
+            Tab(text: 'Recent Scans'),
+            Tab(text: 'Favorites'),
+          ],
+        ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildRecentScansTab(),
+          _buildFavoritesTab(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Add scan document functionality
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PreviewScreen(
+                imagePath: "",
+              ),
+            ),
+          );
+        },
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.document_scanner, color: AppColors.buttonText),
+      ),
+    );
+  }
+
+  Widget _buildRecentScansTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          _buildScanButton(context),
+          const SizedBox(height: 30),
+          Expanded(
+            child: ListView.builder(
+              itemCount: 2,
+              itemBuilder: (context, index) {
+                return DocCard();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFavoritesTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView.builder(
+        itemCount: 2,
+        itemBuilder: (context, index) {
+          return DocCard();
+        },
+      ),
+    );
+  }
+
+  Widget _buildScanButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: InkWell(
+          onTap: () {
+            // Add scan functionality
+          },
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
+                Icon(Icons.add_a_photo, size: 50, color: AppColors.primary),
+                const SizedBox(width: 15),
                 Text(
-                  'Categories',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.titleText,
-                      ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    CateCard.buildCategoryCard(
-                        context, 'PDF', Icons.picture_as_pdf, Colors.red),
-                    CateCard.buildCategoryCard(
-                        context, 'Word', Icons.description, Colors.blue),
-                    CateCard.buildCategoryCard(
-                        context, 'Images', Icons.image, Colors.green),
-                  ],
-                ),
-
-                // Folders Section
-                const SizedBox(height: 24),
-
-                const Headline(isIcon: true, title: 'Folders'),
-
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 3,
-                  itemBuilder: (context, index) {
-                    return Folder(
-                      index: index,
-                    );
-                  },
-                ),
-
-                // Recent Scans Section
-                const SizedBox(height: 24),
-
-                const Headline(isIcon: false, title: 'Recent Scans'),
-
-                const SizedBox(height: 16),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return const DocCard();
-                  },
+                  'Scan New Document',
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        onPressed: () {},
-        child: const Icon(
-          Icons.document_scanner,
-          color: AppColors.buttonText,
-          size: 32,
         ),
       ),
     );

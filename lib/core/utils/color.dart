@@ -10,6 +10,7 @@ class AppColors {
 
   // Dot indicator colors
   static final Color inactiveDot = Colors.grey.shade300;
+  static final Color bgColor = const Color.fromARGB(255, 237, 233, 233);
 
   // Button colors
   static const Color buttonText = Colors.white;

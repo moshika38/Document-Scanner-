@@ -21,7 +21,7 @@ class EndDrawer extends StatelessWidget {
                   Stack(
                     alignment: Alignment.center,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 150,
                         height: 150,
                         child: CircularProgressIndicator(

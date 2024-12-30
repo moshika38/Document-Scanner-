@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/utils/color.dart';
-import 'package:flutter_application_1/features/home/widget/popup_window.dart';
 
 class Headline extends StatefulWidget {
   final String title;
-  final bool isIcon;
-  const Headline({
+
+  Headline({
     super.key,
     required this.title,
-    required this.isIcon,
   });
 
   @override
@@ -16,8 +14,6 @@ class Headline extends StatefulWidget {
 }
 
 class _HeadlineState extends State<Headline> {
-
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -29,26 +25,16 @@ class _HeadlineState extends State<Headline> {
                 color: AppColors.titleText,
               ),
         ),
-        widget.isIcon
-            ? IconButton(
-                icon: const Icon(
-                  Icons.create_new_folder,
-                  size: 32,
-                ),
-                onPressed: () {
-                  PopupWindow.addFolder(context);
-                },
-              )
-            : TextButton(
-                onPressed: () {},
-                child: Text(
-                  'Clear All',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
-                ),
-              ),
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            "See all",
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 14,
+            ),
+          ),
+        ),
       ],
     );
   }

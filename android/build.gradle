@@ -6,10 +6,10 @@ allprojects {
 }
 
 rootProject.buildDir = "../build"
-subprocess {
+subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
-subprocess {
+subprojects {
     project.evaluationDependsOn(":app")
 }
 

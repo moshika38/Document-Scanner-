@@ -14,7 +14,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Document Scanner',
       theme: AppTheme.lightTheme,
-       
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouting.router,
     );
