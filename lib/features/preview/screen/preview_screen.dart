@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_application_1/core/utils/color.dart';
+import 'package:flutter_application_1/features/home/widget/end_drawer.dart';
+import 'package:flutter_application_1/features/preview/widget/delete_popup.dart';
+import 'package:flutter_application_1/features/preview/widget/preview_screen_btn.dart';
 
 class PreviewScreen extends StatefulWidget {
   final String imagePath;
@@ -15,37 +18,16 @@ class PreviewScreen extends StatefulWidget {
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   void _shareImage() {
     // Share.shareFiles([widget.imagePath]);
-  }
-
-  void _deleteImage() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Image'),
-        content: const Text('Are you sure you want to delete this image?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              File(widget.imagePath).deleteSync();
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const EndDrawer(),
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
@@ -56,34 +38,55 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 )),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit, color: AppColors.buttonText),
-            onPressed: () {
-              // Navigate to edit screen
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.share, color: AppColors.buttonText),
-            onPressed: _shareImage,
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: AppColors.buttonText),
-            onPressed: _deleteImage,
-          ),
+              icon: const Icon(Icons.settings, color: AppColors.buttonText),
+              onPressed: () {
+                _scaffoldKey.currentState?.openEndDrawer();
+              }),
         ],
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.buttonText),
+          icon:
+              const Icon(Icons.arrow_back_ios_new, color: AppColors.buttonText),
           onPressed: () => Navigator.pop(context),
         ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          PreviewScreenBtn(
+            icon: Icons.edit,
+            onPressed: () {},
+          ),
+          PreviewScreenBtn(
+            icon: Icons.delete,
+            onPressed: () {
+              DeletePopup.deleteImage(context, widget.imagePath);
+            },
+          ),
+          PreviewScreenBtn(
+            icon: Icons.share,
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
             child: InteractiveViewer(
-              child: Image.file(
-                File(widget.imagePath),
-                fit: BoxFit.contain,
-              ),
+              child: widget.imagePath != ""
+                  ? Image.file(
+                      File(widget.imagePath),
+                      fit: BoxFit.contain,
+                    )
+                  : const Center(
+                      child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                        strokeWidth: 5,
+                      ),
+                    )),
             ),
           ),
         ],
