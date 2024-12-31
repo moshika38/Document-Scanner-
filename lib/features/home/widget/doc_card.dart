@@ -48,7 +48,7 @@ class _DocCardState extends State<DocCard> {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.favorite_border,
                             color: AppColors.primary,
                           ),
@@ -65,7 +65,7 @@ class _DocCardState extends State<DocCard> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.file_present,
+                        const Icon(Icons.file_present,
                             size: 16, color: AppColors.descriptionText),
                         const SizedBox(width: 4),
                         Text(

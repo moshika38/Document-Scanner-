@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
     primaryColor: AppColors.primary,
-    // fontFamily: GoogleFonts.poppins().fontFamily,
+    fontFamily: GoogleFonts.poppins().fontFamily,
     // Text Themes
-    scaffoldBackgroundColor: AppColors.bgColor, 
+    scaffoldBackgroundColor: AppColors.bgColor,
     cardTheme: const CardTheme(
       color: Colors.white,
       elevation: 2.0,
@@ -16,7 +16,7 @@ class AppTheme {
     textTheme: const TextTheme(
       // Title style from onboarding
       headlineMedium: TextStyle(
-        fontSize: 28,
+        fontSize: 25,
         fontWeight: FontWeight.bold,
         color: AppColors.titleText,
       ),
@@ -26,7 +26,7 @@ class AppTheme {
         color: AppColors.descriptionText,
       ),
       bodyMedium: TextStyle(
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: FontWeight.w900,
         color: AppColors.descriptionText,
       ),
@@ -36,8 +36,6 @@ class AppTheme {
         color: AppColors.descriptionText,
       ),
     ),
-
-  
 
     // Button Theme
     elevatedButtonTheme: ElevatedButtonThemeData(

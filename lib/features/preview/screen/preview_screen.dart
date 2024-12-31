@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:flutter_application_1/core/utils/color.dart';
 import 'package:flutter_application_1/features/home/widget/end_drawer.dart';
 import 'package:flutter_application_1/features/preview/widget/delete_popup.dart';
 import 'package:flutter_application_1/features/preview/widget/preview_screen_btn.dart';
+import 'package:flutter_application_1/features/preview/widget/rename.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class PreviewScreen extends StatefulWidget {
-  final String imagePath;
+  final String pdfPath;
 
   const PreviewScreen({
     super.key,
-    required this.imagePath,
+    required this.pdfPath,
   });
 
   @override
@@ -19,9 +20,6 @@ class PreviewScreen extends StatefulWidget {
 
 class _PreviewScreenState extends State<PreviewScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  void _shareImage() {
-    // Share.shareFiles([widget.imagePath]);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         title: Text('Preview',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: AppColors.buttonText,
-                  fontSize: 24,
+                  fontSize: 20,
                 )),
         actions: [
           IconButton(
@@ -45,8 +43,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         ],
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon:
-              const Icon(Icons.arrow_back_ios_new, color: AppColors.buttonText),
+          icon: const Icon(Icons.arrow_back, color: AppColors.buttonText),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -55,17 +52,21 @@ class _PreviewScreenState extends State<PreviewScreen> {
         children: [
           PreviewScreenBtn(
             icon: Icons.edit,
-            onPressed: () {},
+            onPressed: () {
+              Rename.renameDoc(context);
+            },
           ),
           PreviewScreenBtn(
             icon: Icons.delete,
             onPressed: () {
-              DeletePopup.deleteImage(context, widget.imagePath);
+              DeletePopup().deleteImage(context, widget.pdfPath);
             },
           ),
           PreviewScreenBtn(
             icon: Icons.share,
-            onPressed: () {},
+            onPressed: () {
+               
+            },
           ),
         ],
       ),
@@ -73,20 +74,21 @@ class _PreviewScreenState extends State<PreviewScreen> {
         children: [
           Expanded(
             child: InteractiveViewer(
-              child: widget.imagePath != ""
-                  ? Image.file(
-                      File(widget.imagePath),
-                      fit: BoxFit.contain,
+              child: widget.pdfPath != ""
+                  ? PDFView(
+                      filePath: widget.pdfPath,
+                      
                     )
                   : const Center(
                       child: SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
-                        strokeWidth: 5,
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                          strokeWidth: 5,
+                        ),
                       ),
-                    )),
+                    ),
             ),
           ),
         ],

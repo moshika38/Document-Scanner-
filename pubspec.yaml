@@ -44,6 +44,8 @@ dependencies:
   google_fonts: ^6.2.1
   pdf: ^3.11.1
   google_mlkit_document_scanner: ^0.3.0
+  flutter_pdfview: ^1.4.0
+  
 
   
   

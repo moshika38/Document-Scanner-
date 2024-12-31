@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/utils/color.dart';
 import 'package:flutter_application_1/features/home/widget/doc_card.dart';
 import 'package:flutter_application_1/features/home/widget/end_drawer.dart';
-import 'package:flutter_application_1/features/preview/screen/preview_screen.dart';
+import 'package:flutter_application_1/services/document_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           'Doc Scanner',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: AppColors.buttonText,
-                fontSize: 24,
+                fontSize: 20,
               ),
         ),
         elevation: 0,
@@ -72,14 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Add scan document functionality
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PreviewScreen(
-                imagePath: "",
-              ),
-            ),
-          );
+          DocumentServices().scanDocument(context);
         },
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.document_scanner, color: AppColors.buttonText),
@@ -99,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             child: ListView.builder(
               itemCount: 2,
               itemBuilder: (context, index) {
-                return DocCard();
+                return const DocCard();
               },
             ),
           ),
@@ -114,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: ListView.builder(
         itemCount: 2,
         itemBuilder: (context, index) {
-          return DocCard();
+          return const DocCard();
         },
       ),
     );
@@ -129,17 +122,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: InkWell(
           onTap: () {
             // Add scan functionality
+            DocumentServices().scanDocument(context);
           },
           child: Container(
             padding: const EdgeInsets.all(20),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.add_a_photo, size: 50, color: AppColors.primary),
+                const Icon(Icons.add_a_photo,
+                    size: 50, color: AppColors.primary),
                 const SizedBox(width: 15),
                 Text(
                   'Scan New Document',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),

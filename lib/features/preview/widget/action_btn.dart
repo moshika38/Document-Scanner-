@@ -20,7 +20,7 @@ class ActionBtn extends StatelessWidget {
       child: ElevatedButton.icon(
         icon: Icon(text == "Save to Folder" ? Icons.save : Icons.camera_alt,
             size: 32, color: AppColors.buttonText),
-        label: Text(text, style: TextStyle(color: AppColors.buttonText)),
+        label: Text(text, style: const TextStyle(color: AppColors.buttonText)),
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(

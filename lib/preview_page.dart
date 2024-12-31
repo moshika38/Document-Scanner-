@@ -5,7 +5,7 @@ class PreviewPage extends StatelessWidget {
   final String imagePath;
   final String pdfPath;
 
-  const PreviewPage({required this.imagePath, required this.pdfPath});
+  const PreviewPage({super.key, required this.imagePath, required this.pdfPath});
 
   Future<void> deleteImage(BuildContext context) async {
     try {

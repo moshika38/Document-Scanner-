@@ -1,7 +1,6 @@
 import 'package:flutter_application_1/features/auth/screen/sing_in_screen.dart';
 import 'package:flutter_application_1/features/home/screen/home_screen.dart';
 import 'package:flutter_application_1/features/on%20boarding/screen/on_boarding_screen.dart';
-import 'package:flutter_application_1/features/preview/screen/preview_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouting {
@@ -18,12 +17,9 @@ class AppRouting {
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => HomeScreen(),
+        builder: (context, state) => const HomeScreen(),
       ),
-      GoRoute(
-        path: '/preview',
-        builder: (context, state) => PreviewScreen(imagePath: "",),
-      ),
+       
     ],
   );
 }

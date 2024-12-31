@@ -1,15 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/utils/color.dart';
+import 'package:flutter_application_1/services/document_services.dart';
 
 class DeletePopup {
-  static void deleteImage(BuildContext context, String imagePath) {
+  void deleteImage(BuildContext context, String imagePath) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          'Delete Image',
+          'Delete Document',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: AppColors.descriptionText,
                 fontSize: 24,
@@ -24,15 +23,19 @@ class DeletePopup {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              // Pop the current dialog
+              Navigator.of(context).pop();
+            },
             child: const Text('Cancel',
                 style: TextStyle(color: AppColors.primary)),
           ),
           TextButton(
             onPressed: () {
-              File(imagePath).deleteSync();
-              Navigator.pop(context);
-              Navigator.pop(context);
+              // Delete the image and then pop the dialog
+              DocumentServices().deletePdf(context, imagePath);
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
             child: const Text('Delete',
                 style: TextStyle(color: AppColors.primary)),

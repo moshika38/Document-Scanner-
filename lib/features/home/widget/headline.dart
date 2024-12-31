@@ -4,7 +4,7 @@ import 'package:flutter_application_1/core/utils/color.dart';
 class Headline extends StatefulWidget {
   final String title;
 
-  Headline({
+  const Headline({
     super.key,
     required this.title,
   });
