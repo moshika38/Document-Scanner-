@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/utils/color.dart';
+import 'package:flutter_application_1/features/widget/delete_popup.dart';
+import 'package:flutter_application_1/features/widget/edit_popup.dart';
+import 'package:flutter_application_1/models/doc_model.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class DocCard extends StatefulWidget {
-  const DocCard({super.key});
+  final DocModel docModel;
+  const DocCard({
+    super.key,
+    required this.docModel,
+  });
 
   @override
   State<DocCard> createState() => _DocCardState();
@@ -29,10 +37,9 @@ class _DocCardState extends State<DocCard> {
                 margin: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  image: const DecorationImage(
-                    image: NetworkImage('https://picsum.photos/200'),
-                    fit: BoxFit.cover,
-                  ),
+                ),
+                child: PDFView(
+                  filePath: widget.docModel.path,
                 ),
               ),
               // Document Details
@@ -44,38 +51,33 @@ class _DocCardState extends State<DocCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Document ',
+                          widget.docModel.name,
                           style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.favorite_border,
-                            color: AppColors.primary,
-                          ),
-                          onPressed: () {
-                            // Add to favorites
-                          },
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ],
                     ),
-                    Text(
-                      'Scanned on ${DateTime.now().toString().split(' ')[0]}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    const SizedBox(height: 4),
                     Row(
                       children: [
                         const Icon(Icons.file_present,
                             size: 16, color: AppColors.descriptionText),
                         const SizedBox(width: 4),
                         Text(
-                          'PDF • 2.3 MB',
+                          'PDF ',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: AppColors.descriptionText,
                                   ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.docModel.size,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.descriptionText,
+                          ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -88,14 +90,19 @@ class _DocCardState extends State<DocCard> {
                               color: AppColors.primary,
                             )),
                         IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              RenamePopup().rename(context, widget.docModel.path, false, widget.docModel.name);
+                            },
                             icon: const Icon(
                               Icons.edit,
                               size: 18,
                               color: AppColors.primary,
                             )),
                         IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              DeletePopup()
+                                  .deleteImage(context, widget.docModel.path, false);
+                            },
                             icon: const Icon(
                               Icons.delete,
                               size: 18,

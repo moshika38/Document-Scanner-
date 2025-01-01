@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/utils/theme.dart';
 import 'package:flutter_application_1/routing/routing.dart';
+import 'package:flutter_application_1/features/home/services/document_services.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DocumentServices()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

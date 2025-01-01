@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/widget/snack_bar.dart';
 import 'package:flutter_application_1/features/preview/screen/preview_screen.dart';
+import 'package:flutter_application_1/models/doc_model.dart';
+import 'package:flutter_application_1/features/home/services/path_services.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:google_mlkit_document_scanner/google_mlkit_document_scanner.dart';
 
-class DocumentServices {
+class DocumentServices extends ChangeNotifier {
   final DocumentScanner _documentScanner =
       DocumentScanner(options: DocumentScannerOptions());
 
@@ -24,20 +26,21 @@ class DocumentServices {
 
         // Navigate to the preview page with the PDF path
         if (context.mounted) {
+          CustomSnackBar.showSuccess(context, "Document scanned successfully");
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  PreviewScreen( pdfPath: pdfPath),
+              builder: (context) => PreviewScreen(pdfPath: pdfPath),
             ),
           );
-          CustomSnackBar.showSuccess(context, "Document scanned successfully");
         }
       }
+      notifyListeners();
     } catch (e) {
       if (context.mounted) {
         CustomSnackBar.showError(context, "Error: $e");
       }
+      notifyListeners();
     }
   }
 
@@ -53,13 +56,13 @@ class DocumentServices {
         ),
       ));
 
-      final downloadsDir = Directory('/storage/emulated/0/Download');
-      if (await downloadsDir.exists()) {
-        final pdfPath = '${downloadsDir.path}/${_documentScanner.id}.pdf';
+      final downloadsDir = await PathServices.getLocation();
+      if (downloadsDir.isNotEmpty) {
+        final pdfPath = '${downloadsDir}/${_documentScanner.id}.pdf';
         final file = File(pdfPath);
 
         await file.writeAsBytes(await pdf.save());
-
+        notifyListeners();
         return pdfPath;
       } else {
         throw Exception('Downloads directory not found');
@@ -81,28 +84,6 @@ class DocumentServices {
     }
   }
 
-  // delete Pdf
-  Future<void> deletePdf(BuildContext context, String pdfPath) async {
-    try {
-      final file = File(pdfPath);
-      if (await file.exists()) {
-        await file.delete();
-
-        if (context.mounted) {
-          CustomSnackBar.showSuccess(context, "Document deleted successfully");
-        }
-      } else {
-        if (context.mounted) {
-          CustomSnackBar.showError(context, "Document not found");
-        }
-      }
-    } catch (e) {
-      if (context.mounted) {
-        CustomSnackBar.showError(context, "Error deleting Document: $e");
-      }
-    }
-  }
-
   // rename doc name
   Future<void> renameFile(
       BuildContext context, String filePath, String newName) async {
@@ -120,10 +101,61 @@ class DocumentServices {
           CustomSnackBar.showError(context, "Document not found");
         }
       }
+      notifyListeners();
     } catch (e) {
       if (context.mounted) {
         CustomSnackBar.showError(context, "Error renaming Document: $e");
       }
+      notifyListeners();
+    }
+  }
+
+  Future<List<DocModel>> getPdfFiles() async {
+    final directoryPath = await PathServices.getLocation();
+    final directory = Directory(directoryPath);
+    final List<DocModel> docList = [];
+
+    if (await directory.exists()) {
+      final files = directory.listSync(recursive: true);
+
+      for (var file in files) {
+        if (file is File && file.path.endsWith('.pdf')) {
+          final fileName = file.uri.pathSegments.last;
+          final fileSize = await file.length();
+          final fileTime = await file.lastModified();
+
+          docList.add(DocModel(
+            name: fileName,
+            time: fileTime.toString(),
+            size: '${(fileSize / 1024).toStringAsFixed(2)} KB',
+            path: file.path,
+          ));
+        }
+      }
+    }
+    return docList.reversed.toList();
+  }
+
+  Future<void> deletePdf(BuildContext context, String pdfPath) async {
+    try {
+      final file = File(pdfPath);
+      if (await file.exists()) {
+        await file.delete();
+
+        if (context.mounted) {
+          CustomSnackBar.showSuccess(context, "Document deleted successfully");
+        }
+      } else {
+        if (context.mounted) {
+          CustomSnackBar.showError(context, "Document not found");
+        }
+      }
+      notifyListeners();
+    } catch (e) {
+      if (context.mounted) {
+        CustomSnackBar.showError(context, "Error deleting Document: $e");
+      }
+      notifyListeners();
     }
   }
 }

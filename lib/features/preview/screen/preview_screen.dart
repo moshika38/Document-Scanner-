@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/utils/color.dart';
 import 'package:flutter_application_1/features/home/widget/end_drawer.dart';
-import 'package:flutter_application_1/features/preview/widget/delete_popup.dart';
+import 'package:flutter_application_1/features/widget/delete_popup.dart';
 import 'package:flutter_application_1/features/preview/widget/preview_screen_btn.dart';
 import 'package:flutter_application_1/features/preview/widget/rename.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -59,7 +59,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
           PreviewScreenBtn(
             icon: Icons.delete,
             onPressed: () {
-              DeletePopup().deleteImage(context, widget.pdfPath);
+              DeletePopup().deleteImage(context, widget.pdfPath, true);
             },
           ),
           PreviewScreenBtn(
