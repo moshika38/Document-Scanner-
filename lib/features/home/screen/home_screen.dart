@@ -3,8 +3,9 @@ import 'package:flutter_application_1/core/utils/color.dart';
 import 'package:flutter_application_1/features/home/widget/doc_card.dart';
 import 'package:flutter_application_1/features/home/widget/end_drawer.dart';
 import 'package:flutter_application_1/features/preview/screen/preview_screen.dart';
+import 'package:flutter_application_1/features/widget/upgrade_reminder.dart';
 import 'package:flutter_application_1/models/doc_model.dart';
-import 'package:flutter_application_1/features/home/services/document_services.dart';
+import 'package:flutter_application_1/features/home/provider/document_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +17,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  Future<void> handleScanDocument(BuildContext context) async {
+    bool isPro = false;
+    int scanCount = 11;
+
+    if (!isPro) {
+      if (scanCount >= 10) {
+        UpgradeReminder().showPopup(context);
+      } else {
+        context.read<DocumentServices>().scanDocument(context);
+      }
+    } else {
+      context.read<DocumentServices>().scanDocument(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,84 +58,85 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         elevation: 0,
       ),
-      body: Consumer<DocumentServices>(builder: (context, docServices, child) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              _buildScanButton(context),
-              SizedBox(
-                height: 50,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(width: 20),
-                      Text(
-                        "Recent  ",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: FutureBuilder(
-                  future: docServices.getPdfFiles(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: AppColors.primary,
-                              strokeWidth: 6,
-                            ),
-                          ),
-                        ),
-                      );             
-                    } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      final files = snapshot.data as List<DocModel>;
-                      return ListView.builder(
-                        itemCount: files.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PreviewScreen(
-                                    pdfPath: files[index].path,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: DocCard(docModel: files[index]),
-                          );
-                        },
-                      );
-                    } else {
-                      return Center(
-                        child: Text(
-                          "No documents found",
+      body: Consumer<DocumentServices>(
+        builder: (context, docServices, child) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                _buildScanButton(context),
+                SizedBox(
+                  height: 50,
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(width: 20),
+                        Text(
+                          "Recent  ",
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                      );
-                    }
-                  },
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.read<DocumentServices>().scanDocument(context);
+                Expanded(
+                  child: FutureBuilder(
+                    future: docServices.getPdfFiles(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                                strokeWidth: 6,
+                              ),
+                            ),
+                          ),
+                        );
+                      } else if (snapshot.hasData &&
+                          snapshot.data!.isNotEmpty) {
+                        final files = snapshot.data as List<DocModel>;
+                        return ListView.builder(
+                          itemCount: files.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PreviewScreen(
+                                      pdfPath: files[index].path,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: DocCard(docModel: files[index]),
+                            );
+                          },
+                        );
+                      } else {
+                        return Center(
+                          child: Text(
+                            "No documents found",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => handleScanDocument(context),
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.document_scanner, color: AppColors.buttonText),
       ),
@@ -133,9 +150,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: InkWell(
-          onTap: () {
-            context.read<DocumentServices>().scanDocument(context);
-          },
+          onTap: () => handleScanDocument(context),
           child: Container(
             padding: const EdgeInsets.all(20),
             child: Row(

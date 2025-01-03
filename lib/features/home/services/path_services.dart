@@ -10,6 +10,6 @@ class PathServices {
   // get location
   static Future<String> getLocation() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString("location") ?? "/storage/emulated/0/Download";
+    return preferences.getString("location") ?? "/storage/emulated/0/Download/Doc scanner";
   }
 }

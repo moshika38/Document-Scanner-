@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/widget/snack_bar.dart';
-import 'package:flutter_application_1/features/preview/screen/preview_screen.dart';
 import 'package:flutter_application_1/models/doc_model.dart';
 import 'package:flutter_application_1/features/home/services/path_services.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -21,18 +20,14 @@ class DocumentServices extends ChangeNotifier {
         final firstImagePath = result.images.first;
 
         // Save the image as a PDF
-        final pdfPath = await _saveAsPdf(firstImagePath);
+         await _saveAsPdf(firstImagePath);
         await deleteImage(firstImagePath);
 
         // Navigate to the preview page with the PDF path
         if (context.mounted) {
-          CustomSnackBar.showSuccess(context, "Document scanned successfully");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PreviewScreen(pdfPath: pdfPath),
-            ),
-          );
+          CustomSnackBar.showSuccess(context, "Document scanned successfully.Wait for few seconds");
+           
+           
         }
       }
       notifyListeners();
@@ -58,7 +53,7 @@ class DocumentServices extends ChangeNotifier {
 
       final downloadsDir = await PathServices.getLocation();
       if (downloadsDir.isNotEmpty) {
-        final pdfPath = '${downloadsDir}/${_documentScanner.id}.pdf';
+        final pdfPath = '$downloadsDir/${_documentScanner.id}.pdf';
         final file = File(pdfPath);
 
         await file.writeAsBytes(await pdf.save());
